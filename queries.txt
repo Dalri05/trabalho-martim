@@ -1,0 +1,371 @@
+-- 1) Liste todas as séries que são europeias, que tenham mais de 3 temporadas e que possuam premiação de atores em pelo menos duas temporadas;
+SELECT
+  s.titulo,
+  p.nome AS pais_origem,
+  COUNT(DISTINCT t.idTemporada) AS qtd_temporadas,
+  COUNT(DISTINCT CASE WHEN pa.idPremiacao IS NOT NULL THEN t.idTemporada END)
+         AS qtd_temporadas_premiadas
+FROM Serie s
+JOIN Pais      p ON p.idPais  = s.idPaisOrigem
+JOIN Temporada t ON t.idSerie = s.idSerie
+LEFT JOIN PremiacaoAtor pa
+       ON pa.idSerie     = s.idSerie
+      AND pa.idTemporada = t.idTemporada
+WHERE p.nome IN ('França','Alemanha','Espanha','Itália','Portugal')
+GROUP BY s.idSerie, s.titulo, p.nome
+HAVING COUNT(DISTINCT t.idTemporada) > 3
+   AND COUNT(DISTINCT CASE WHEN pa.idPremiacao IS NOT NULL THEN t.idTemporada END) >= 2;
+
+
+
+--2) Liste todas os filmes que tenham sido premiados nas categorias diretor e ator;
+SELECT f.titulo,
+       f.anoLancamento
+FROM   Filme f
+JOIN   PremiacaoAtor    pa ON pa.idFilme = f.idFilme
+JOIN   PremiacaoDiretor pd ON pd.idFilme = f.idFilme
+GROUP  BY f.idFilme, f.titulo, f.anoLancamento;
+
+
+--3) Liste todas as séries que não sejam europeias, que possuam mais atrizes do que atores e que tenham episódios dirigidos por mais de um diretor;
+WITH elenco AS (
+  SELECT
+         s.idSerie,
+         COUNT(DISTINCT CASE WHEN a.sexo = 'F' THEN a.idAtor END) AS qtd_atrizes,
+         COUNT(DISTINCT CASE WHEN a.sexo = 'M' THEN a.idAtor END) AS qtd_atores
+  FROM   Serie         s
+  JOIN   Temporada     t  ON t.idSerie     = s.idSerie
+  JOIN   Episodio      e  ON e.idTemporada = t.idTemporada
+  JOIN   EpisodioAtor  ea ON ea.idEpisodio = e.idEpisodio
+  JOIN   Ator          a  ON a.idAtor      = ea.idAtor
+  GROUP  BY s.idSerie
+),
+multi_dir AS (
+  SELECT DISTINCT s.idSerie
+  FROM   Serie             s
+  JOIN   Temporada         t  ON t.idSerie     = s.idSerie
+  JOIN   Episodio          e  ON e.idTemporada = t.idTemporada
+  JOIN   EpisodioDiretor   ed ON ed.idEpisodio = e.idEpisodio
+  GROUP  BY s.idSerie, e.idEpisodio
+  HAVING COUNT(DISTINCT ed.idDiretor) > 1
+)
+SELECT  s.titulo,
+        p.nome        AS pais_origem,
+        el.qtd_atrizes,
+        el.qtd_atores
+FROM    Serie  s
+JOIN    Pais   p   ON p.idPais  = s.idPaisOrigem
+JOIN    elenco el  ON el.idSerie = s.idSerie
+JOIN    multi_dir md ON md.idSerie = s.idSerie
+WHERE   p.nome NOT IN ('França','Alemanha','Espanha','Itália','Portugal')
+  AND   el.qtd_atrizes > el.qtd_atores;
+
+
+--4) Liste todas as premiações dos filmes feitos antes de 2003, que sejam do gênero aventura e tenham classificação de faixa etária maior do que 12 anos;
+SELECT
+       pr.nome            AS premiacao,
+       pr.ano,
+       f.titulo           AS filme,
+       f.anoLancamento
+FROM   Premiacao         pr
+JOIN   PremiacaoObra     po ON po.idPremiacao = pr.idPremiacao
+JOIN   Filme             f  ON f.idFilme      = po.idFilme
+JOIN   Genero            g  ON g.idGenero     = f.idGenero
+JOIN   FaixaEtaria       fe ON fe.idFaixaEtaria = f.idFaixaEtaria
+WHERE  f.anoLancamento < 2003
+  AND  g.nome = 'Aventura'
+  AND  fe.idadeMinima > 12;
+
+
+--5)Liste todos os personagens interpretados por um ator que tenha feito filmes de romance e que nunca tenha sido premiado;
+SELECT DISTINCT
+       p.nome  AS personagem,
+       a.nome  AS ator,
+       f.titulo
+FROM   Interpretacao  i
+JOIN   Filme          f  ON f.idFilme       = i.idFilme
+JOIN   Genero         g  ON g.idGenero      = f.idGenero
+JOIN   Ator           a  ON a.idAtor        = i.idAtor
+JOIN   Personagem     p  ON p.idPersonagem  = i.idPersonagem
+WHERE  g.nome = 'Romance'
+  AND  NOT EXISTS (SELECT 1
+                   FROM   PremiacaoAtor pa
+                   WHERE  pa.idAtor = a.idAtor);
+
+--6)Liste todos os títulos de episódios em ordem alfabética das séries que tenham mais de 3 temporadas, tenham sido dirigidos por mulheres e tenham classificação livre;
+WITH series_livre_4p AS (
+  SELECT s.idSerie
+  FROM   Serie       s
+  JOIN   FaixaEtaria fe ON fe.idFaixaEtaria = s.idFaixaEtaria
+  JOIN   Temporada   t  ON t.idSerie       = s.idSerie
+  WHERE  fe.classificacao = 'Livre'
+  GROUP  BY s.idSerie
+  HAVING COUNT(*) > 3
+)
+SELECT DISTINCT e.titulo
+FROM   series_livre_4p sl
+JOIN   Temporada       t  ON t.idSerie     = sl.idSerie
+JOIN   Episodio        e  ON e.idTemporada = t.idTemporada
+JOIN   EpisodioDiretor ed ON ed.idEpisodio = e.idEpisodio
+JOIN   Diretor         d  ON d.idDiretor   = ed.idDiretor
+WHERE  d.sexo = 'F'
+ORDER  BY e.titulo;
+
+--7)Liste todos os filmes feitos após 2003 e que tenham atores que tenham participado de séries premiadas.
+SELECT DISTINCT f.titulo, f.anoLancamento
+FROM   Filme f
+JOIN   Interpretacao i ON i.idFilme = f.idFilme
+JOIN   Ator          a ON a.idAtor  = i.idAtor
+WHERE  f.anoLancamento > 2003
+  AND  EXISTS ( SELECT 1
+                FROM   PremiacaoAtor pa
+                WHERE  pa.idAtor = a.idAtor
+                  AND  pa.idSerie IS NOT NULL );
+          
+--8) Liste todos os atores que participaram de séries antes de 2003 (e não tenham participado de outras séries após esse ano), e tenham feito filmes após 2003 (e não
+-- tenham feito filmes antes de 2003). Liste os resultados em ordem inversa de data (mais recente para o mais antigo).
+WITH
+pre_series AS (
+  SELECT DISTINCT i.idAtor
+  FROM   Interpretacao i
+  JOIN   Serie s ON s.idSerie = i.idSerie
+  WHERE  s.anoLancamento < 2003
+),
+post_series AS (
+  SELECT DISTINCT i.idAtor
+  FROM   Interpretacao i
+  JOIN   Serie s ON s.idSerie = i.idSerie
+  WHERE  s.anoLancamento >= 2003
+),
+post_films AS (
+  SELECT i.idAtor, MAX(f.anoLancamento) AS ano_recente
+  FROM   Interpretacao i
+  JOIN   Filme f ON f.idFilme = i.idFilme
+  WHERE  f.anoLancamento > 2003
+  GROUP  BY i.idAtor
+),
+pre_films AS (
+  SELECT DISTINCT i.idAtor
+  FROM   Interpretacao i
+  JOIN   Filme f ON f.idFilme = i.idFilme
+  WHERE  f.anoLancamento <= 2003
+)
+SELECT  a.nome,
+        pf.ano_recente AS ano_filme_recente
+FROM    Ator        a
+JOIN    pre_series  ps  ON ps.idAtor = a.idAtor
+JOIN    post_films  pf  ON pf.idAtor = a.idAtor
+LEFT JOIN post_series psp ON psp.idAtor = a.idAtor
+LEFT JOIN pre_films   prf ON prf.idAtor = a.idAtor
+WHERE   psp.idAtor IS NULL
+  AND   prf.idAtor IS NULL
+ORDER   BY pf.ano_recente DESC;
+
+--9) Liste todos os episódios de séries que tenham no mínimo 4 episódios por temporada com duração maior do que 45 minutos, e que tenham menos de 3 atores nestes
+--episódios (com mais de 45 minutos).
+WITH epi_ok AS (
+  SELECT e.idEpisodio,
+         t.idTemporada,
+         COUNT(DISTINCT ea.idAtor) AS num_atores
+  FROM   Episodio      e
+  JOIN   EpisodioAtor  ea ON ea.idEpisodio = e.idEpisodio
+  JOIN   Temporada     t  ON t.idTemporada = e.idTemporada
+  WHERE  e.duracaoMin > 45
+  GROUP  BY e.idEpisodio, t.idTemporada
+  HAVING COUNT(DISTINCT ea.idAtor) < 3
+),
+temp_ok AS (
+  SELECT idTemporada
+  FROM   epi_ok
+  GROUP  BY idTemporada
+  HAVING COUNT(*) >= 4
+)
+SELECT e.titulo
+FROM   Episodio e
+JOIN   temp_ok  tk ON tk.idTemporada = e.idTemporada
+WHERE  e.duracaoMin > 45
+ORDER  BY e.titulo;
+
+--10) Liste todos os filmes em resolução 4k que tenham sido dirigidos por um de seus atores.
+SELECT DISTINCT f.titulo,
+                f.anoLancamento
+FROM   Filme          f
+JOIN   FilmeDiretor   fd ON fd.idFilme   = f.idFilme
+JOIN   Diretor        d  ON d.idDiretor  = fd.idDiretor
+JOIN   Interpretacao  i  ON i.idFilme    = f.idFilme
+JOIN   Ator           a  ON a.idAtor     = i.idAtor
+WHERE  f.resolucao = '4k'
+  AND  a.nome = d.nome
+ORDER  BY f.anoLancamento, f.titulo;
+
+--11)Liste todos os filmes que tenham duração de mais de 3 horas, que tenham um ator que interpretou a si mesmo (nome do ator igual ao nome do personagem), que tenham sido
+-- lançados antes de 2010 e que tenham recebido alguma premiação (ator, diretor ou filme)
+SELECT DISTINCT
+       f.titulo,
+       f.anoLancamento,
+       f.duracaoMin
+FROM   Filme          f
+JOIN   Interpretacao  i  ON i.idFilme       = f.idFilme
+JOIN   Ator           a  ON a.idAtor        = i.idAtor
+JOIN   Personagem     p  ON p.idPersonagem  = i.idPersonagem
+WHERE  f.duracaoMin  > 180
+  AND  f.anoLancamento < 2010
+  AND  UPPER(a.nome) = UPPER(p.nome)
+  AND  EXISTS (
+         SELECT 1
+         FROM   PremiacaoAtor    pa
+         WHERE  pa.idFilme = f.idFilme
+         UNION ALL
+         SELECT 1
+         FROM   PremiacaoDiretor pd
+         WHERE  pd.idFilme = f.idFilme
+         UNION ALL
+         SELECT 1
+         FROM   PremiacaoObra    po
+         WHERE  po.idFilme = f.idFilme
+       )
+ORDER  BY f.anoLancamento DESC;
+
+--12) Liste todas os episódios, os atores e avaliação dos episódios das séries que possuem avaliação média dos episódios da temporada superior a 7.5, que tenham duração média
+-- dos episódios da temporada entre 45 e 50 minutos, que sejam do gênero comédia ou ação e que tenham tido mais de um diretor na temporada.
+WITH stats AS (
+  SELECT t.idTemporada,
+         AVG(e.duracaoMin)          AS avg_dur,
+         AVG(av.nota)               AS avg_nota,
+         COUNT(DISTINCT ed.idDiretor) AS num_dir
+  FROM   Temporada        t
+  JOIN   Episodio         e  ON e.idTemporada   = t.idTemporada
+  JOIN   AvaliacaoEpisodio av ON av.idEpisodio  = e.idEpisodio
+  JOIN   EpisodioDiretor  ed ON ed.idEpisodio   = e.idEpisodio
+  JOIN   Serie            s  ON s.idSerie       = t.idSerie
+  JOIN   Genero           g  ON g.idGenero      = s.idGenero
+  WHERE  g.nome IN ('Comédia','Ação')
+  GROUP  BY t.idTemporada
+  HAVING AVG(av.nota) > 7.5
+     AND AVG(e.duracaoMin) BETWEEN 45 AND 50
+     AND COUNT(DISTINCT ed.idDiretor) > 1
+)
+SELECT e.titulo                AS episodio,
+       a.nome                  AS ator,
+       av.nota                 AS avaliacao
+FROM   stats st
+JOIN   Episodio         e  ON e.idTemporada = st.idTemporada
+JOIN   AvaliacaoEpisodio av ON av.idEpisodio = e.idEpisodio
+JOIN   EpisodioAtor     ea ON ea.idEpisodio = e.idEpisodio
+JOIN   Ator             a  ON a.idAtor      = ea.idAtor
+ORDER  BY e.titulo, a.nome;
+
+--13)Liste as avaliações médias das séries e filmes de cada diretor, agrupado por tipo (filme/série).
+WITH f_avg AS (
+  SELECT d.idDiretor          AS idDiretor,
+         d.nome               AS diretor,
+         'Filme'              AS tipo,
+         AVG(at.nota)         AS media_nota
+  FROM   FilmeDiretor   fd
+  JOIN   AvaliacaoTitulo at ON at.idFilme  = fd.idFilme
+  JOIN   Diretor        d  ON d.idDiretor = fd.idDiretor
+  GROUP  BY d.idDiretor, d.nome
+),
+s_avg AS (
+  SELECT d.idDiretor          AS idDiretor,
+         d.nome               AS diretor,
+         'Serie'              AS tipo,
+         AVG(at.nota)         AS media_nota
+  FROM   EpisodioDiretor ed
+  JOIN   Episodio        e  ON e.idEpisodio  = ed.idEpisodio
+  JOIN   Temporada       t  ON t.idTemporada = e.idTemporada
+  JOIN   AvaliacaoTitulo at ON at.idSerie    = t.idSerie
+  JOIN   Diretor         d  ON d.idDiretor   = ed.idDiretor
+  GROUP  BY d.idDiretor, d.nome
+)
+SELECT idDiretor,
+       diretor,
+       tipo,
+       ROUND(media_nota,2) AS media_nota
+FROM   f_avg
+UNION ALL
+SELECT idDiretor,
+       diretor,
+       tipo,
+       ROUND(media_nota,2)
+FROM   s_avg
+ORDER  BY diretor, tipo;
+
+--14) Liste os filmes e séries que tenham avaliações de pelo menos dois atores superiores a 8.5, do gênero comédia.
+WITH high_comedy AS (
+  SELECT f.idFilme        AS id, 
+         'Filme'          AS tipo,
+         f.titulo
+  FROM   Filme f
+  JOIN   Genero g   ON g.idGenero = f.idGenero
+  JOIN   AvaliacaoTitulo at ON at.idFilme = f.idFilme
+  WHERE  g.nome = 'Comédia'
+    AND  at.nota > 8.5
+  
+  UNION ALL
+  
+  SELECT s.idSerie        AS id, 
+         'Serie'          AS tipo,
+         s.titulo
+  FROM   Serie s
+  JOIN   Genero g   ON g.idGenero = s.idGenero
+  JOIN   AvaliacaoTitulo at ON at.idSerie = s.idSerie
+  WHERE  g.nome = 'Comédia'
+    AND  at.nota > 8.5
+),
+with_actors AS (
+  SELECT hc.id,
+         hc.tipo,
+         hc.titulo,
+         COUNT(DISTINCT i.idAtor) AS qtd_atores
+  FROM   high_comedy hc
+  LEFT   JOIN Interpretacao i
+         ON (hc.tipo = 'Filme' AND i.idFilme = hc.id)
+         OR (hc.tipo = 'Serie' AND i.idSerie = hc.id)
+  GROUP  BY hc.id, hc.tipo, hc.titulo
+)
+SELECT titulo,
+       tipo,
+       qtd_atores
+FROM   with_actors
+WHERE  qtd_atores >= 2
+ORDER  BY tipo, titulo;
+
+--15) test trigger
+-- 1. ver quantas premiações há ligadas ao filme 1
+SELECT COUNT(*) FROM PremiacaoAtor    WHERE idFilme = 1;
+SELECT COUNT(*) FROM PremiacaoDiretor WHERE idFilme = 1;
+SELECT COUNT(*) FROM PremiacaoObra    WHERE idFilme = 1;
+
+-- 2. remover o filme
+DELETE FROM Filme WHERE idFilme = 1;
+COMMIT;
+
+-- 3. confirmar que tudo foi apagado
+SELECT COUNT(*) FROM PremiacaoAtor    WHERE idFilme = 1;
+SELECT COUNT(*) FROM PremiacaoDiretor WHERE idFilme = 1;
+SELECT COUNT(*) FROM PremiacaoObra    WHERE idFilme = 1;
+
+
+--16) test function
+SELECT f.titulo,
+       fn_total_premiacoes_filme(f.idFilme) AS total_premiacoes
+FROM   Filme f
+ORDER  BY total_premiacoes DESC;
+
+
+--17) test procedure
+-- inativar todo o catálogo produzido no Brasil (idPais = 4)
+BEGIN
+  pr_inativar_obras_pais(4);
+END;
+/
+
+-- verificar
+SELECT titulo, exibicaoAtiva
+FROM   Filme
+WHERE  idPaisOrigem = 4
+UNION ALL
+SELECT titulo, exibicaoAtiva
+FROM   Serie
+WHERE  idPaisOrigem = 4;

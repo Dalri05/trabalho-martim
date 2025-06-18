@@ -1,0 +1,351 @@
+INSERT INTO Pais (idPais, nome) VALUES (1,'França');
+INSERT INTO Pais (idPais, nome) VALUES (2,'Alemanha');
+INSERT INTO Pais (idPais, nome) VALUES (3,'Espanha');
+INSERT INTO Pais (idPais, nome) VALUES (4,'Brasil');
+INSERT INTO Pais (idPais, nome) VALUES (5,'Estados Unidos');
+INSERT INTO Pais (idPais, nome) VALUES (6,'Japão');
+
+INSERT INTO Genero (idGenero, nome) VALUES (1,'Drama');
+INSERT INTO Genero (idGenero, nome) VALUES (4,'Comédia');
+
+INSERT INTO FaixaEtaria (idFaixaEtaria, classificacao, idadeMinima) VALUES (1,'12',12);
+
+INSERT INTO Diretor (idDiretor, nome, sexo) VALUES (1,'Maria Fortes','F');
+INSERT INTO Diretor (idDiretor, nome, sexo) VALUES (2,'Marco Rossi','M');
+INSERT INTO Diretor (idDiretor, nome, sexo) VALUES (3,'Anna Weber','F');
+INSERT INTO Diretor (idDiretor, nome, sexo) VALUES (4,'John Smith','M');
+
+INSERT INTO Ator (idAtor, nome, sexo) VALUES (1,'Alice Moreau','F');
+INSERT INTO Ator (idAtor, nome, sexo) VALUES (2,'Carla Schmidt','F');
+INSERT INTO Ator (idAtor, nome, sexo) VALUES (3,'George Brown','M');
+INSERT INTO Ator (idAtor, nome, sexo) VALUES (4,'Haruka Sato','F');
+INSERT INTO Ator (idAtor, nome, sexo) VALUES (5,'Igor Tanaka','M');
+
+INSERT INTO Personagem (idPersonagem, nome) VALUES (1,'Herói');
+
+INSERT INTO Serie VALUES (1,'Euro Epic',   1,1,1,2010,'S');
+INSERT INTO Serie VALUES (2,'Euro Saga',   1,1,2,2009,'S');
+INSERT INTO Serie VALUES (3,'Euro Legends',1,1,3,2012,'S');
+INSERT INTO Serie VALUES (4,'Brazil Show',1,1,4,2020,'S');
+INSERT INTO Serie VALUES (5,'USA Thrills',1,1,5,2021,'S');
+INSERT INTO Serie VALUES (6,'Japan Quest',1,1,6,2019,'S');
+
+INSERT INTO Temporada VALUES ( 1,1,1);
+INSERT INTO Temporada VALUES ( 2,2,1);
+INSERT INTO Temporada VALUES ( 3,3,1);
+INSERT INTO Temporada VALUES ( 4,4,1);
+INSERT INTO Temporada VALUES ( 5,1,2);
+INSERT INTO Temporada VALUES ( 6,2,2);
+INSERT INTO Temporada VALUES ( 7,3,2);
+INSERT INTO Temporada VALUES ( 8,4,2);
+INSERT INTO Temporada VALUES ( 9,1,3);
+INSERT INTO Temporada VALUES (10,2,3);
+INSERT INTO Temporada VALUES (11,3,3);
+INSERT INTO Temporada VALUES (12,4,3);
+INSERT INTO Temporada VALUES (13,1,4);
+INSERT INTO Temporada VALUES (14,2,4);
+INSERT INTO Temporada VALUES (15,1,5);
+INSERT INTO Temporada VALUES (16,2,5);
+INSERT INTO Temporada VALUES (17,1,6);
+INSERT INTO Temporada VALUES (18,2,6);
+
+INSERT INTO Episodio VALUES (1,'Brazil Start',46,13);
+INSERT INTO Episodio VALUES (2,'USA Blast',  47,15);
+INSERT INTO Episodio VALUES (3,'Japan Rise', 48,17);
+
+INSERT INTO EpisodioDiretor VALUES (1,1);
+INSERT INTO EpisodioDiretor VALUES (1,2);
+INSERT INTO EpisodioDiretor VALUES (2,3);
+INSERT INTO EpisodioDiretor VALUES (2,4);
+INSERT INTO EpisodioDiretor VALUES (3,2);
+INSERT INTO EpisodioDiretor VALUES (3,3);
+
+INSERT INTO EpisodioAtor VALUES (1,1,1);
+INSERT INTO EpisodioAtor VALUES (1,2,1);
+INSERT INTO EpisodioAtor VALUES (1,3,1);
+INSERT INTO EpisodioAtor VALUES (2,4,1);
+INSERT INTO EpisodioAtor VALUES (2,2,1);
+INSERT INTO EpisodioAtor VALUES (2,3,1);
+INSERT INTO EpisodioAtor VALUES (3,1,1);
+INSERT INTO EpisodioAtor VALUES (3,4,1);
+INSERT INTO EpisodioAtor VALUES (3,5,1);
+
+INSERT INTO Filme (idFilme, titulo, duracaoMin, resolucao, idGenero, idFaixaEtaria, idPaisOrigem, anoLancamento, exibicaoAtiva) VALUES
+(1,'Epic Blockbuster',120,'1080p',1,1,5,2021,'S');
+INSERT INTO Filme VALUES
+(2,'Drama Smash',110,'1080p',1,1,5,2022,'S');
+INSERT INTO Filme VALUES
+(3,'Comedy Hit',105,'1080p',4,1,5,2023,'S');
+
+INSERT INTO FilmeDiretor VALUES (1,2);
+INSERT INTO FilmeDiretor VALUES (2,3);
+INSERT INTO FilmeDiretor VALUES (3,4);
+
+INSERT INTO Premiacao VALUES (1,'Actor Awards 2011',2011);
+INSERT INTO Premiacao VALUES (2,'Actor Awards 2012',2012);
+INSERT INTO Premiacao VALUES (3,'Actor Awards 2013',2013);
+INSERT INTO Premiacao VALUES (4,'Director Awards 2021',2021);
+INSERT INTO Premiacao VALUES (5,'Director Awards 2022',2022);
+INSERT INTO Premiacao VALUES (6,'Director Awards 2023',2023);
+
+INSERT INTO PremiacaoAtor (idPremiacao,idAtor,idSerie,idTemporada) VALUES (1,1,1,1);
+INSERT INTO PremiacaoAtor (idPremiacao,idAtor,idSerie,idTemporada) VALUES (1,1,1,2);
+INSERT INTO PremiacaoAtor VALUES (2,2,2,5,NULL);
+INSERT INTO PremiacaoAtor VALUES (2,2,2,6,NULL);
+INSERT INTO PremiacaoAtor VALUES (3,1,3,9,NULL);
+INSERT INTO PremiacaoAtor VALUES (3,1,3,10,NULL);
+INSERT INTO PremiacaoAtor (idPremiacao,idAtor,idFilme) VALUES (1,1,1);
+INSERT INTO PremiacaoAtor (idPremiacao,idAtor,idFilme) VALUES (2,2,2);
+INSERT INTO PremiacaoAtor (idPremiacao,idAtor,idFilme) VALUES (3,3,3);
+
+INSERT INTO PremiacaoDiretor (idPremiacao,idDiretor,idFilme) VALUES (4,2,1);
+INSERT INTO PremiacaoDiretor (idPremiacao,idDiretor,idFilme) VALUES (5,3,2);
+INSERT INTO PremiacaoDiretor (idPremiacao,idDiretor,idFilme) VALUES (6,4,3);
+
+COMMIT;
+
+
+INSERT INTO Genero (idGenero, nome) VALUES (2,'Aventura');
+
+INSERT INTO FaixaEtaria (idFaixaEtaria, classificacao, idadeMinima) VALUES (2,'14',14);
+
+INSERT INTO Filme (idFilme,titulo,duracaoMin,resolucao,idGenero,idFaixaEtaria,idPaisOrigem,anoLancamento,exibicaoAtiva)
+VALUES (4,'Adventure Classic 1',125,'720p',2,2,5,2002,'S');
+
+INSERT INTO Filme VALUES
+(5,'Adventure Classic 2',118,'720p',2,2,5,2001,'S');
+
+INSERT INTO Filme VALUES
+(6,'Adventure Classic 3',130,'720p',2,2,5,2000,'S');
+
+INSERT INTO Premiacao (idPremiacao,nome,ano) VALUES (10,'Adventure Awards 2002',2002);
+INSERT INTO Premiacao (idPremiacao,nome,ano) VALUES (11,'Adventure Awards 2001',2001);
+INSERT INTO Premiacao (idPremiacao,nome,ano) VALUES (12,'Adventure Awards 2000',2000);
+
+INSERT INTO PremiacaoObra (idPremiacao,idFilme,idSerie) VALUES (10,4,NULL);
+INSERT INTO PremiacaoObra (idPremiacao,idFilme,idSerie) VALUES (11,5,NULL);
+INSERT INTO PremiacaoObra (idPremiacao,idFilme,idSerie) VALUES (12,6,NULL);
+
+COMMIT;
+
+INSERT INTO Genero       (idGenero, nome) VALUES (3,'Romance');
+INSERT INTO Personagem   (idPersonagem, nome)  VALUES (2,'Protagonista');
+INSERT INTO Personagem   (idPersonagem, nome)  VALUES (3,'Amante');
+INSERT INTO Personagem   (idPersonagem, nome)  VALUES (4,'Poeta');
+
+INSERT INTO Filme (idFilme, titulo, duracaoMin, resolucao,
+                   idGenero, idFaixaEtaria, idPaisOrigem,
+                   anoLancamento, exibicaoAtiva)
+VALUES (7,'Romantic Tale', 112,'1080p',3,1,5,2010,'S');
+
+INSERT INTO Filme VALUES
+(8,'Love Forever', 118,'1080p',3,1,5,2011,'S');
+
+INSERT INTO Filme VALUES
+(9,'Heart Beats', 110,'1080p',3,1,4,2012,'S');
+
+INSERT INTO Interpretacao (idInterpretacao, idAtor, idPersonagem, idFilme, idSerie)
+VALUES (4,4,2,7,NULL);
+
+INSERT INTO Interpretacao VALUES (5,5,3,8,NULL);
+INSERT INTO Interpretacao VALUES (6,4,4,9,NULL);
+
+COMMIT;
+
+INSERT INTO FaixaEtaria (idFaixaEtaria, classificacao, idadeMinima) VALUES (3,'Livre',0);
+
+INSERT INTO Diretor (idDiretor, nome, sexo) VALUES (6,'Laura Costa','F');
+
+INSERT INTO Serie (idSerie, titulo, idGenero, idFaixaEtaria, idPaisOrigem, anoLancamento, exibicaoAtiva)
+VALUES (7,'Kids Quest',2,3,5,2024,'S');
+
+INSERT INTO Temporada VALUES (19,1,7);
+INSERT INTO Temporada VALUES (20,2,7);
+INSERT INTO Temporada VALUES (21,3,7);
+INSERT INTO Temporada VALUES (22,4,7);
+
+INSERT INTO Episodio VALUES (4,'Adventure Alpha', 40,19);
+INSERT INTO Episodio VALUES (5,'Adventure Bravo', 41,20);
+INSERT INTO Episodio VALUES (6,'Adventure Charlie',42,21);
+
+INSERT INTO EpisodioDiretor VALUES (4,6);
+INSERT INTO EpisodioDiretor VALUES (5,6);
+INSERT INTO EpisodioDiretor VALUES (6,6);
+
+COMMIT;
+
+INSERT INTO Interpretacao VALUES (7,1,1,2,NULL);
+INSERT INTO Interpretacao VALUES (8,2,2,3,NULL);
+COMMIT;
+
+INSERT INTO Interpretacao VALUES (9,1,1,1,NULL);
+COMMIT;
+
+INSERT INTO Ator VALUES (6,'Susana Lima','F');
+INSERT INTO Ator VALUES (7,'Diego Lopez','M');
+INSERT INTO Ator VALUES (8,'Mei Chen','F');
+
+INSERT INTO Serie VALUES (8,'Past Tales',      1,1,1,2002,'S');
+INSERT INTO Serie VALUES (9,'Retro Drama',     1,1,2,2001,'S');
+INSERT INTO Serie VALUES (10,'Old Adventure',  2,1,3,1999,'S');
+
+INSERT INTO Temporada VALUES (23,1,8);
+INSERT INTO Temporada VALUES (24,1,9);
+INSERT INTO Temporada VALUES (25,1,10);
+
+INSERT INTO Interpretacao VALUES (10,6,1,NULL, 8);
+INSERT INTO Interpretacao VALUES (11,7,1,NULL, 9);
+INSERT INTO Interpretacao VALUES (12,8,1,NULL,10);
+
+INSERT INTO Filme VALUES (10,'Modern Story',100,'1080p',1,1,5,2005,'S');
+INSERT INTO Filme VALUES (11,'Future Movie',105,'1080p',1,1,5,2007,'S');
+INSERT INTO Filme VALUES (12,'Next Gen',     98,'1080p',4,1,5,2010,'S');
+
+INSERT INTO Interpretacao VALUES (13,6,1,10,NULL);
+INSERT INTO Interpretacao VALUES (14,7,1,11,NULL);
+INSERT INTO Interpretacao VALUES (15,8,1,12,NULL);
+
+COMMIT;
+
+INSERT INTO Episodio VALUES (7,'Kids Quest S4E1',50,22);
+INSERT INTO Episodio VALUES (8,'Kids Quest S4E2',51,22);
+INSERT INTO Episodio VALUES (9,'Kids Quest S4E3',52,22);
+INSERT INTO Episodio VALUES (10,'Kids Quest S4E4',53,22);
+
+INSERT INTO EpisodioDiretor VALUES (7,6);
+INSERT INTO EpisodioDiretor VALUES (8,6);
+INSERT INTO EpisodioDiretor VALUES (9,6);
+INSERT INTO EpisodioDiretor VALUES (10,6);
+
+INSERT INTO EpisodioAtor VALUES (7,1,1);
+INSERT INTO EpisodioAtor VALUES (7,2,1);
+INSERT INTO EpisodioAtor VALUES (8,1,1);
+INSERT INTO EpisodioAtor VALUES (8,4,1);
+INSERT INTO EpisodioAtor VALUES (9,2,1);
+INSERT INTO EpisodioAtor VALUES (9,4,1);
+INSERT INTO EpisodioAtor VALUES (10,1,1);
+INSERT INTO EpisodioAtor VALUES (10,5,1);
+
+COMMIT;
+
+INSERT INTO Ator    VALUES (9,'Rafael Cruz','M');
+INSERT INTO Diretor VALUES (8,'Rafael Cruz','M');
+
+INSERT INTO Ator    VALUES (10,'Bruna Alves','F');
+INSERT INTO Diretor VALUES (9,'Bruna Alves','F');
+
+INSERT INTO Ator    VALUES (11,'Kenji Ito','M');
+INSERT INTO Diretor VALUES (10,'Kenji Ito','M');
+
+INSERT INTO Filme (idFilme,titulo,duracaoMin,resolucao,idGenero,idFaixaEtaria,idPaisOrigem,anoLancamento,exibicaoAtiva)
+VALUES (13,'Vision 4K I',100,'4k',1,1,5,2024,'S');
+
+INSERT INTO Filme VALUES
+(14,'Vision 4K II',102,'4k',1,1,5,2024,'S');
+
+INSERT INTO Filme VALUES
+(15,'Vision 4K III',98,'4k',4,1,5,2025,'S');
+
+INSERT INTO FilmeDiretor VALUES (13,8);
+INSERT INTO FilmeDiretor VALUES (14,9);
+INSERT INTO FilmeDiretor VALUES (15,10);
+
+INSERT INTO Interpretacao VALUES (16,9,1,13,NULL);
+INSERT INTO Interpretacao VALUES (17,10,1,14,NULL);
+INSERT INTO Interpretacao VALUES (18,11,1,15,NULL);
+
+COMMIT;
+
+INSERT INTO Ator VALUES (12,'Carlos Mendes','M');
+INSERT INTO Ator VALUES (13,'Elisa Monteiro','F');
+INSERT INTO Ator VALUES (14,'Takeshi Sato','M');
+
+INSERT INTO Personagem VALUES (5,'Carlos Mendes');
+INSERT INTO Personagem VALUES (6,'Elisa Monteiro');
+INSERT INTO Personagem VALUES (7,'Takeshi Sato');
+
+INSERT INTO Filme (idFilme,titulo,duracaoMin,resolucao,
+                   idGenero,idFaixaEtaria,idPaisOrigem,
+                   anoLancamento,exibicaoAtiva)
+VALUES (16,'Epic Cameo I',190,'1080p',1,1,5,2008,'S');
+
+INSERT INTO Filme VALUES
+(17,'Epic Cameo II',185,'1080p',1,1,5,2006,'S');
+
+INSERT INTO Filme VALUES
+(18,'Epic Cameo III',200,'1080p',1,1,4,2005,'S');
+
+INSERT INTO Interpretacao VALUES (19,12,5,16,NULL);
+INSERT INTO Interpretacao VALUES (20,13,6,17,NULL);
+INSERT INTO Interpretacao VALUES (21,14,7,18,NULL);
+
+INSERT INTO Premiacao VALUES (13,'Cameo Awards 2008',2008);
+INSERT INTO Premiacao VALUES (14,'Cameo Awards 2006',2006);
+INSERT INTO Premiacao VALUES (15,'Cameo Awards 2005',2005);
+
+INSERT INTO PremiacaoAtor    (idPremiacao,idAtor, idFilme)  VALUES (13,12,16);
+INSERT INTO PremiacaoDiretor (idPremiacao,idDiretor,idFilme) VALUES (14,4,17);
+INSERT INTO PremiacaoObra    (idPremiacao,idFilme,idSerie)  VALUES (15,18,NULL);
+
+COMMIT;
+
+INSERT INTO Filme VALUES (19,'Comedy Prime',110,'1080p',4,1,5,2024,'S');
+INSERT INTO Filme VALUES (20,'Laugh Riot', 105,'1080p',4,1,5,2025,'S');
+
+INSERT INTO Interpretacao VALUES (24,1,1,19,NULL); 
+INSERT INTO Interpretacao VALUES (25,2,1,19,NULL); 
+INSERT INTO Interpretacao VALUES (26,9,1,20,NULL); 
+INSERT INTO Interpretacao VALUES (27,10,1,20,NULL); 
+
+INSERT INTO AvaliacaoTitulo VALUES (29,19,NULL,8.7);
+INSERT INTO AvaliacaoTitulo VALUES (30,20,NULL,8.8);
+
+INSERT INTO Serie VALUES (13,'Comic Adventures',4,1,5,2023,'S');
+INSERT INTO Temporada VALUES (28,1,13);
+
+INSERT INTO Interpretacao VALUES (28,3,1,NULL,13);
+INSERT INTO Interpretacao VALUES (29,4,1,NULL,13);
+
+INSERT INTO AvaliacaoTitulo VALUES (31,NULL,13,8.9);
+
+COMMIT;
+
+INSERT INTO Genero (idGenero, nome) VALUES (5,'Ação');
+
+INSERT INTO Episodio VALUES (19,'Comic S1E1',46,28);
+INSERT INTO Episodio VALUES (20,'Comic S1E2',47,28);
+INSERT INTO Episodio VALUES (21,'Comic S1E3',48,28);
+INSERT INTO Episodio VALUES (22,'Comic S1E4',47,28);
+
+INSERT INTO EpisodioDiretor VALUES (19,1);
+INSERT INTO EpisodioDiretor VALUES (19,6);
+INSERT INTO EpisodioDiretor VALUES (20,1);
+INSERT INTO EpisodioDiretor VALUES (20,6);
+INSERT INTO EpisodioDiretor VALUES (21,1);
+INSERT INTO EpisodioDiretor VALUES (21,6);
+INSERT INTO EpisodioDiretor VALUES (22,1);
+INSERT INTO EpisodioDiretor VALUES (22,6);
+
+INSERT INTO AvaliacaoEpisodio (idEpisodio, nota) VALUES (19,8.0);
+INSERT INTO AvaliacaoEpisodio (idEpisodio, nota) VALUES (20,8.1);
+INSERT INTO AvaliacaoEpisodio (idEpisodio, nota) VALUES (21,8.2);
+INSERT INTO AvaliacaoEpisodio (idEpisodio, nota) VALUES (22,8.3);
+
+INSERT INTO AvaliacaoTitulo (idAvaliacao,idFilme,nota) VALUES (32,13,8.6);
+
+INSERT INTO AvaliacaoTitulo VALUES (33,14,8.4);
+
+INSERT INTO AvaliacaoTitulo VALUES (34,NULL,11,8.3);
+
+INSERT INTO AvaliacaoTitulo VALUES (35,NULL,13,8.9);
+
+INSERT INTO EpisodioAtor VALUES (19,3,1);
+INSERT INTO EpisodioAtor VALUES (19,4,1);
+INSERT INTO EpisodioAtor VALUES (20,3,1);
+INSERT INTO EpisodioAtor VALUES (20,4,1);
+INSERT INTO EpisodioAtor VALUES (21,3,1);
+INSERT INTO EpisodioAtor VALUES (21,4,1);
+INSERT INTO EpisodioAtor VALUES (22,3,1);
+INSERT INTO EpisodioAtor VALUES (22,4,1);
+
+COMMIT;
